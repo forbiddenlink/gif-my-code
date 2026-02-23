@@ -22,6 +22,7 @@ var (
 	noCursor     bool
 	fps          int
 	highlightStr string
+	windowStyle  string
 )
 
 var rootCmd = &cobra.Command{
@@ -49,6 +50,7 @@ func init() {
 	rootCmd.Flags().BoolVar(&noCursor, "no-cursor", false, "Disable cursor animation")
 	rootCmd.Flags().IntVar(&fps, "fps", 30, "Frames per second")
 	rootCmd.Flags().StringVar(&highlightStr, "highlight", "", "Lines to highlight (e.g., '5,7-9')")
+	rootCmd.Flags().StringVar(&windowStyle, "window", "none", "Window style: macos, windows, or none")
 }
 
 func run(cmd *cobra.Command, args []string) error {
@@ -99,6 +101,9 @@ func run(cmd *cobra.Command, args []string) error {
 
 	// Generate frames
 	fmt.Println("🎬 Generating animation frames...")
+	if windowStyle != "none" && windowStyle != "" {
+		fmt.Printf("🪟 Window style: %s\n", windowStyle)
+	}
 	config := animator.Config{
 		Width:          width,
 		FontSize:       fontSize,
@@ -106,6 +111,8 @@ func run(cmd *cobra.Command, args []string) error {
 		FPS:            fps,
 		ShowCursor:     !noCursor,
 		HighlightLines: highlightLines,
+		WindowStyle:    windowStyle,
+		Theme:          theme,
 	}
 	frames, err := animator.GenerateFrames(highlighted, config)
 	if err != nil {

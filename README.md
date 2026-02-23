@@ -12,7 +12,10 @@ Perfect for Twitter posts, README files, documentation, tutorials, and portfolio
 - 📐 **Flexible sizing** - Set width and font size
 - 🎯 **Smart language detection** - Automatic from file extension
 - 💾 **Optimized output** - Reasonable file sizes
-- 📍 **Line highlighting** - Draw attention to specific lines (NEW!)
+- 📍 **Line highlighting** - Draw attention to specific lines
+- 🪟 **Window chrome** - macOS or Windows style (NEW!)
+- 🎨 **Gradient backgrounds** - Professional visual polish (NEW!)
+- ✨ **Drop shadows** - Depth and dimension (NEW!)
 
 ## 🚀 Installation
 
@@ -62,6 +65,7 @@ gif-my-code example.rs \
   -f, --font-size float    Font size (default 16)
   -l, --lang string        Force language (auto-detect if not provided)
       --highlight string   Lines to highlight (e.g., '5,7-9')
+      --window string      Window style: macos, windows, or none (default "none")
       --no-cursor          Disable cursor animation
       --fps int            Frames per second (default 30)
 ```
@@ -116,6 +120,29 @@ gif-my-code buggy-code.js \
   --highlight 12 \
   --theme monokai \
   --output bug-fix-demo.gif
+```
+
+### With Window Chrome (Professional Look!)
+```bash
+# macOS style window
+gif-my-code examples/example.go \
+  --window macos \
+  --theme dracula \
+  --output macos-demo.gif
+
+# Combine window + highlighting
+gif-my-code examples/example.py \
+  --window macos \
+  --highlight 3,5-7 \
+  --theme monokai \
+  --speed 1.5 \
+  --output professional-demo.gif
+
+# Windows style
+gif-my-code examples/example.tsx \
+  --window windows \
+  --theme github \
+  --output windows-demo.gif
 ```
 
 ## 🎯 Use Cases
@@ -175,24 +202,28 @@ Run `gif-my-code themes` for the full list.
 
 ## 🚧 Roadmap
 
-### v1.0 (MVP) ✅
+### v1.0 ✅ COMPLETE
 - [x] Basic typing animation
 - [x] Syntax highlighting
 - [x] Multiple themes
 - [x] CLI interface
+- [x] Line highlighting
+- [x] Window chrome (macOS & Windows)
+- [x] Gradient backgrounds
+- [x] Drop shadows
 
 ### v1.1 (Coming Soon)
-- [ ] Line highlighting (emphasize specific lines)
 - [ ] Annotations (pop-up comments)
-- [ ] Window chrome (make it look like a code editor)
 - [ ] MP4 export (higher quality video)
-- [ ] Custom backgrounds
+- [ ] Line numbers toggle
+- [ ] Custom fonts (JetBrains Mono, Fira Code)
+- [ ] Custom gradient colors
 
 ### v2.0 (Future)
 - [ ] Web version (no CLI needed)
 - [ ] Batch processing
 - [ ] API access
-- [ ] Custom fonts
+- [ ] Custom window titles
 
 ## 🤝 Contributing
 

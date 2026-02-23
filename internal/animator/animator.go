@@ -17,12 +17,14 @@ type Config struct {
 	FPS            int
 	ShowCursor     bool
 	HighlightLines []int
+	WindowStyle    string
+	Theme          string
 }
 
 // GenerateFrames creates all animation frames
 func GenerateFrames(code *highlight.HighlightedCode, config Config) ([]*image.RGBA, error) {
-	// Create renderer with highlight config
-	renderer, err := render.NewRenderer(config.Width, config.FontSize, config.HighlightLines)
+	// Create renderer with highlight config and visual enhancements
+	renderer, err := render.NewRenderer(config.Width, config.FontSize, config.HighlightLines, config.WindowStyle, config.Theme)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create renderer: %w", err)
 	}
