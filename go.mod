@@ -1,4 +1,4 @@
-module github.com/elizabethstein/gif-my-code
+module github.com/forbiddenlink/gif-my-code
 
 go 1.25.0
 

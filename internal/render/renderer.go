@@ -4,7 +4,7 @@ import (
 	"image"
 	"image/color"
 
-	"github.com/elizabethstein/gif-my-code/internal/highlight"
+	"github.com/forbiddenlink/gif-my-code/internal/highlight"
 	"github.com/fogleman/gg"
 	"github.com/golang/freetype/truetype"
 	"golang.org/x/image/font/gofont/gomonobold"

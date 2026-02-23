@@ -21,14 +21,14 @@ Perfect for Twitter posts, README files, documentation, tutorials, and portfolio
 
 ### From Source
 ```bash
-git clone https://github.com/elizabethstein/gif-my-code.git
+git clone https://github.com/forbiddenlink/gif-my-code.git
 cd gif-my-code
 go build -o gif-my-code
 ```
 
 ### Using Go Install
 ```bash
-go install github.com/elizabethstein/gif-my-code@latest
+go install github.com/forbiddenlink/gif-my-code@latest
 ```
 
 ## 📖 Usage
@@ -231,7 +231,7 @@ Run `gif-my-code themes` for the full list.
 - [ ] Batch processing
 - [ ] API access
 
-**Want a feature? [Open an issue](https://github.com/elizabethstein/gif-my-code/issues)!**
+**Want a feature? [Open an issue](https://github.com/forbiddenlink/gif-my-code/issues)!**
 
 ## 🤝 Contributing
 
@@ -255,11 +255,10 @@ Built with:
 ## 💬 Questions?
 
 - Open an issue on GitHub
-- Tweet [@elizabethstein](https://twitter.com/elizabethstein)
 - Check out my [portfolio](https://elizabethannstein.com)
 
 ---
 
-**Made with 🐾 by [Elizabeth Stein](https://github.com/elizabethstein)**
+**Made with 🐾 by [forbiddenlink](https://github.com/forbiddenlink)**
 
 *If this tool helped you, consider starring the repo!* ⭐

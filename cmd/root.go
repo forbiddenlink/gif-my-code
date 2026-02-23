@@ -5,10 +5,10 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/elizabethstein/gif-my-code/internal/animator"
-	"github.com/elizabethstein/gif-my-code/internal/encoder"
-	"github.com/elizabethstein/gif-my-code/internal/highlight"
-	"github.com/elizabethstein/gif-my-code/internal/parser"
+	"github.com/forbiddenlink/gif-my-code/internal/animator"
+	"github.com/forbiddenlink/gif-my-code/internal/encoder"
+	"github.com/forbiddenlink/gif-my-code/internal/highlight"
+	"github.com/forbiddenlink/gif-my-code/internal/parser"
 	"github.com/spf13/cobra"
 )
 

@@ -1,7 +1,7 @@
 package main
 
 import (
-	"github.com/elizabethstein/gif-my-code/cmd"
+	"github.com/forbiddenlink/gif-my-code/cmd"
 )
 
 func main() {

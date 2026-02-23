@@ -5,8 +5,8 @@ import (
 	"image"
 	"math"
 
-	"github.com/elizabethstein/gif-my-code/internal/highlight"
-	"github.com/elizabethstein/gif-my-code/internal/render"
+	"github.com/forbiddenlink/gif-my-code/internal/highlight"
+	"github.com/forbiddenlink/gif-my-code/internal/render"
 )
 
 // Config holds animation configuration
