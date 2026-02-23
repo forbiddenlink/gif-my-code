@@ -21,12 +21,14 @@ type Config struct {
 	Theme          string
 	HiDPI          bool
 	LineNumbers    bool
+	Language       string
+	LaserReveal    bool
 }
 
 // GenerateFrames creates all animation frames
 func GenerateFrames(code *highlight.HighlightedCode, config Config) ([]*image.RGBA, error) {
 	// Create renderer with highlight config and visual enhancements
-	renderer, err := render.NewRenderer(config.Width, config.FontSize, config.HighlightLines, config.WindowStyle, config.Theme, config.HiDPI, config.LineNumbers)
+	renderer, err := render.NewRenderer(config.Width, config.FontSize, config.HighlightLines, config.WindowStyle, config.Theme, config.HiDPI, config.LineNumbers, config.Language, config.LaserReveal)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create renderer: %w", err)
 	}

@@ -25,6 +25,7 @@ var (
 	windowStyle  string
 	hiDPI        bool
 	lineNumbers  bool
+	laser        bool
 )
 
 var rootCmd = &cobra.Command{
@@ -55,6 +56,7 @@ func init() {
 	rootCmd.Flags().StringVar(&windowStyle, "window", "none", "Window style: macos, windows, or none")
 	rootCmd.Flags().BoolVar(&hiDPI, "hidpi", false, "Render at 2x resolution (Retina scale)")
 	rootCmd.Flags().BoolVar(&lineNumbers, "line-numbers", false, "Show line numbers")
+	rootCmd.Flags().BoolVar(&laser, "laser", true, "Use fluid laser reveal animation instead of typing")
 }
 
 func run(cmd *cobra.Command, args []string) error {
@@ -119,6 +121,8 @@ func run(cmd *cobra.Command, args []string) error {
 		Theme:          theme,
 		HiDPI:          hiDPI,
 		LineNumbers:    lineNumbers,
+		Language:       lang,
+		LaserReveal:    laser,
 	}
 	frames, err := animator.GenerateFrames(highlighted, config)
 	if err != nil {

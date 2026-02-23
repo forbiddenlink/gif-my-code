@@ -5,6 +5,7 @@ import (
 	"image"
 	"image/color"
 	"math"
+	"strings"
 
 	"github.com/fogleman/gg"
 	"github.com/forbiddenlink/gif-my-code/internal/highlight"
@@ -30,6 +31,8 @@ type Config struct {
 	HiDPI          bool
 	LineNumbers    bool
 	ScaleFactor    float64
+	Language       string
+	LaserReveal    bool
 }
 
 // Renderer handles image rendering
@@ -39,7 +42,7 @@ type Renderer struct {
 }
 
 // NewRenderer creates a new renderer with enhanced visual config
-func NewRenderer(width int, fontSize float64, highlightLines []int, windowStyle string, theme string, hiDPI bool, lineNumbers bool) (*Renderer, error) {
+func NewRenderer(width int, fontSize float64, highlightLines []int, windowStyle string, theme string, hiDPI bool, lineNumbers bool, language string, laserReveal bool) (*Renderer, error) {
 	// Parse the embedded font
 	font, err := truetype.Parse(gomonobold.TTF)
 	if err != nil {
@@ -75,6 +78,8 @@ func NewRenderer(width int, fontSize float64, highlightLines []int, windowStyle 
 		HiDPI:          hiDPI,
 		LineNumbers:    lineNumbers,
 		ScaleFactor:    scaleFactor,
+		Language:       language,
+		LaserReveal:    laserReveal,
 	}
 
 	return &Renderer{
@@ -129,12 +134,21 @@ func (r *Renderer) RenderFrame(tokens []highlight.Token, cursorPos int, showCurs
 	y := float64(r.config.Padding) + r.config.FontSize + shadowOffset + chromeHeight
 
 	charCount := 0
+	var laserX, laserY float64
+	laserCaptured := false
 
 	// Draw tokens
 	for _, token := range tokens {
 		for _, ch := range token.Text {
-			if charCount >= cursorPos {
+			if !r.config.LaserReveal && charCount >= cursorPos {
 				break
+			}
+
+			// Capture exact coordinate of the laser
+			if charCount == cursorPos {
+				laserX = x
+				laserY = y
+				laserCaptured = true
 			}
 
 			// Handle newlines
@@ -147,6 +161,31 @@ func (r *Renderer) RenderFrame(tokens []highlight.Token, cursorPos int, showCurs
 
 			// Set color from token style
 			textColor := tokenColor(token)
+
+			// Scanner Laser Opacity Calculation
+			if r.config.LaserReveal {
+				diff := charCount - cursorPos
+
+				opacity := 255.0
+				if diff > 0 {
+					opacity = 255.0 - (float64(diff) * 20.0) // Fade out over ~12 characters
+					if opacity < 0 {
+						opacity = 0
+					}
+				}
+
+				if opacity <= 0 {
+					w, _ := dc.MeasureString(string(ch))
+					x += w
+					charCount++
+					continue
+				}
+
+				tr, tg, tb, _ := textColor.RGBA()
+				// Convert premultiplied alpha back, though tokenColor returns solid colors (A=255)
+				textColor = color.RGBA{uint8(tr >> 8), uint8(tg >> 8), uint8(tb >> 8), uint8(opacity)}
+			}
+
 			dc.SetColor(textColor)
 
 			// Draw character
@@ -159,18 +198,39 @@ func (r *Renderer) RenderFrame(tokens []highlight.Token, cursorPos int, showCurs
 			charCount++
 		}
 
-		if charCount >= cursorPos {
+		if !r.config.LaserReveal && charCount >= cursorPos {
 			break
 		}
 	}
 
-	// Draw cursor
+	// Capture laser position if it's past the very last character
+	if charCount == cursorPos {
+		laserX = x
+		laserY = y
+		laserCaptured = true
+	}
+
+	// Draw cursor / Laser
 	if showCursor && cursorPos <= totalChars(tokens) {
-		dc.SetColor(r.config.CursorColor)
-		cursorWidth := 10.0 * r.config.ScaleFactor
-		cursorHeight := r.config.FontSize
-		dc.DrawRectangle(x, y-r.config.FontSize+5*r.config.ScaleFactor, cursorWidth, cursorHeight)
-		dc.Fill()
+		if r.config.LaserReveal && laserCaptured {
+			// Scanner Laser vertical line
+			dc.SetColor(color.RGBA{0, 240, 255, 255}) // Neon cyan
+			laserWidth := 2.0 * r.config.ScaleFactor
+			laserHeight := r.config.FontSize * r.config.LineHeight
+			dc.DrawRectangle(laserX, laserY-r.config.FontSize+5*r.config.ScaleFactor, laserWidth, laserHeight)
+			dc.Fill()
+
+			// Glowing core of the laser
+			dc.SetColor(color.RGBA{255, 255, 255, 200})
+			dc.DrawRectangle(laserX+0.5*r.config.ScaleFactor, laserY-r.config.FontSize+5*r.config.ScaleFactor, 1.0*r.config.ScaleFactor, laserHeight)
+			dc.Fill()
+		} else if !r.config.LaserReveal {
+			dc.SetColor(r.config.CursorColor)
+			cursorWidth := 10.0 * r.config.ScaleFactor
+			cursorHeight := r.config.FontSize
+			dc.DrawRectangle(x, y-r.config.FontSize+5*r.config.ScaleFactor, cursorWidth, cursorHeight)
+			dc.Fill()
+		}
 	}
 
 	return dc.Image().(*image.RGBA), nil
@@ -239,6 +299,33 @@ func (r *Renderer) drawGradientBackground(dc *gg.Context, offset float64, progre
 		r.config.CornerRadius,
 	)
 	dc.Fill()
+
+	// Kinetic Typographic Background
+	if r.config.Language != "" {
+		dc.Push()
+
+		// Massive font size
+		bgFontSize := r.config.FontSize * 8.0
+		face := truetype.NewFace(r.font, &truetype.Options{
+			Size: bgFontSize,
+		})
+		dc.SetFontFace(face)
+
+		// Very faint, dark text
+		dc.SetColor(color.RGBA{0, 0, 0, 40})
+
+		// Scroll vertically based on progress
+		textY := float64(r.config.Height) - (progress * float64(r.config.Height) * 0.5)
+		textX := offset + float64(r.config.Padding)
+
+		// Rotate slightly for dynamic feel
+		dc.RotateAbout(math.Pi/12, offset+float64(r.config.Width)/2, offset+float64(r.config.Height)/2)
+
+		// Draw the language name in uppercase
+		dc.DrawString(strings.ToUpper(r.config.Language), textX, textY)
+
+		dc.Pop()
+	}
 
 	// Breathing effect: vary the height and position of the inner glow
 	breathOffset := math.Sin(progress*math.Pi*2) * 10 * r.config.ScaleFactor
