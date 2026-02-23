@@ -1,0 +1,34 @@
+# Binaries
+gif-my-code
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Test output files
+test-*.gif
+*-test.gif
+output.gif
+code.gif
+
+# Keep demo files
+!macos-demo.gif
+!python-highlighted.gif
+!highlighted.gif
+!test.gif
+
+# Go build artifacts
+*.test
+*.out
+vendor/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db

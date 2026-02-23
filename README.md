@@ -212,18 +212,26 @@ Run `gif-my-code themes` for the full list.
 - [x] Gradient backgrounds
 - [x] Drop shadows
 
-### v1.1 (Coming Soon)
-- [ ] Annotations (pop-up comments)
-- [ ] MP4 export (higher quality video)
-- [ ] Line numbers toggle
+### v1.1 (Coming Soon - Based on Feedback!)
+- [ ] **Line numbers toggle** - Most requested
+- [ ] **Custom window titles** - Easy polish
+- [ ] **Export resolution** (2x/3x for retina)
+- [ ] **Watermark option** (optional branding)
+- [ ] **No-shadow toggle** (for flat look)
+
+### v1.2 (Roadmap)
+- [ ] Diff mode (added/removed lines in green/red)
 - [ ] Custom fonts (JetBrains Mono, Fira Code)
-- [ ] Custom gradient colors
+- [ ] MP4 export (smaller files, higher quality)
+- [ ] Stdin support (pipe code directly)
 
 ### v2.0 (Future)
+- [ ] Annotations (arrows, boxes, comments)
 - [ ] Web version (no CLI needed)
 - [ ] Batch processing
 - [ ] API access
-- [ ] Custom window titles
+
+**Want a feature? [Open an issue](https://github.com/elizabethstein/gif-my-code/issues)!**
 
 ## 🤝 Contributing
 
