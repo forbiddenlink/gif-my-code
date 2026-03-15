@@ -48,3 +48,31 @@ coverage/
 test_run/
 supabase/.temp/
 dist/
+
+# Environment
+.env
+.env.local
+.env.*.local
+.env*.local
+
+# Dependencies
+node_modules/
+
+# Build output
+.next/
+dist/
+build/
+out/
+
+# Vercel
+.vercel
+
+# Environment
+.env
+.env.local
+
+# Dependencies
+node_modules/
+
+# Next.js
+.next/
