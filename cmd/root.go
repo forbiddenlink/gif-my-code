@@ -16,6 +16,7 @@ var (
 	theme        string
 	speed        float64
 	output       string
+	format       string
 	width        int
 	fontSize     float64
 	language     string
@@ -47,6 +48,7 @@ func init() {
 	rootCmd.Flags().StringVarP(&theme, "theme", "t", "dracula", "Color theme")
 	rootCmd.Flags().Float64VarP(&speed, "speed", "s", 1.0, "Typing speed multiplier")
 	rootCmd.Flags().StringVarP(&output, "output", "o", "code.gif", "Output file path")
+	rootCmd.Flags().StringVar(&format, "format", "", "Output format: gif or mp4 (auto-detect from extension if not provided)")
 	rootCmd.Flags().IntVarP(&width, "width", "w", 800, "Image width in pixels")
 	rootCmd.Flags().Float64VarP(&fontSize, "font-size", "f", 16, "Font size")
 	rootCmd.Flags().StringVarP(&language, "lang", "l", "", "Force language (auto-detect if not provided)")
@@ -131,10 +133,24 @@ func run(cmd *cobra.Command, args []string) error {
 
 	fmt.Printf("   Generated %d frames\n", len(frames))
 
-	// Encode GIF
-	fmt.Println("🎁 Encoding GIF...")
-	if err := encoder.EncodeGIF(frames, output, fps); err != nil {
-		return fmt.Errorf("failed to encode GIF: %w", err)
+	// Determine output format
+	outputFormat := format
+	if outputFormat == "" {
+		outputFormat = encoder.DetectFormat(output)
+	}
+
+	// Encode to the appropriate format
+	switch outputFormat {
+	case "mp4":
+		fmt.Println("🎬 Encoding MP4...")
+		if err := encoder.EncodeMP4Pipe(frames, output, fps); err != nil {
+			return fmt.Errorf("failed to encode MP4: %w", err)
+		}
+	default:
+		fmt.Println("🎁 Encoding GIF...")
+		if err := encoder.EncodeGIF(frames, output, fps); err != nil {
+			return fmt.Errorf("failed to encode GIF: %w", err)
+		}
 	}
 
 	// Get file size
