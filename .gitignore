@@ -11,12 +11,6 @@ test-*.gif
 output.gif
 code.gif
 
-# Keep demo files
-!macos-demo.gif
-!python-highlighted.gif
-!highlighted.gif
-!test.gif
-
 # Go build artifacts
 *.test
 *.out
@@ -77,3 +71,6 @@ node_modules/
 # Next.js
 .next/
 .env*
+
+# AGENTS.md is a local symlink to CLAUDE.md, not tracked
+/AGENTS.md
