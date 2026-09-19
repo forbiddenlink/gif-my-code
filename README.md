@@ -76,10 +76,7 @@ go build -o gif-my-code
 go install github.com/forbiddenlink/gif-my-code@latest
 ```
 
-### Option 3: Download Binary
-Download the latest release from the [Releases page](https://github.com/forbiddenlink/gif-my-code/releases).
-
-**Requirements:** Go 1.20+
+**Requirements:** Go 1.25+
 
 ---
 
@@ -218,7 +215,7 @@ Professional-looking code snippets for conference talks and demos.
 
 ## 🎨 Popular Themes
 
-Run `gif-my-code themes` to see all 50+ themes. Here are the most popular:
+50+ themes are supported via `--theme`. Here are the most popular:
 
 - **`dracula`** - Dark theme with vibrant colors (default)
 - **`monokai`** - Classic Sublime Text theme
@@ -260,7 +257,7 @@ gif-my-code/
 │   └── encoder/         # GIF encoding
 ├── examples/            # Example code files
 ├── demos/               # Showcase GIFs
-└── assets/              # Fonts and resources
+└── assets/              # Icon and social preview images
 ```
 
 ### Building from Source
@@ -303,6 +300,7 @@ go build -o gif-my-code
 - [x] 50+ color themes
 - [x] Line highlighting
 - [x] Window chrome (macOS & Windows)
+- [x] MP4 export
 - [x] CLI interface with all options
 
 ### 🎯 v1.1 (Next - Community Driven)
@@ -318,7 +316,6 @@ Based on your feedback! Vote on features in [Issues](https://github.com/forbidde
 ### 🔮 v1.2 (Future)
 - [ ] Diff mode (show added/removed lines in green/red)
 - [ ] Annotations (arrows, boxes, comments)
-- [ ] MP4 export (higher quality, smaller files)
 - [ ] Batch processing (generate GIFs for all files)
 
 ### 🚀 v2.0 (Long-term)
@@ -362,8 +359,6 @@ git push origin feature/your-feature-name
 
 # Open a Pull Request on GitHub
 ```
-
-See [CONTRIBUTING.md](CONTRIBUTING.md) for detailed guidelines.
 
 ---
 
