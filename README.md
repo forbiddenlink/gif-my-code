@@ -78,6 +78,11 @@ go install github.com/forbiddenlink/gif-my-code@latest
 
 **Requirements:** Go 1.25+
 
+**Optional:** ffmpeg is required for `--format mp4` output. GIF output does not need it.
+```bash
+brew install ffmpeg
+```
+
 ---
 
 ## 📖 Quick Start
