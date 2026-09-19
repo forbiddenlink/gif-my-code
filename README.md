@@ -215,7 +215,7 @@ Professional-looking code snippets for conference talks and demos.
 
 ## 🎨 Popular Themes
 
-Run `gif-my-code themes` to see all 50+ themes. Here are the most popular:
+50+ themes are supported via `--theme`. Here are the most popular:
 
 - **`dracula`** - Dark theme with vibrant colors (default)
 - **`monokai`** - Classic Sublime Text theme
@@ -257,7 +257,7 @@ gif-my-code/
 │   └── encoder/         # GIF encoding
 ├── examples/            # Example code files
 ├── demos/               # Showcase GIFs
-└── assets/              # Fonts and resources
+└── assets/              # Icon and social preview images
 ```
 
 ### Building from Source

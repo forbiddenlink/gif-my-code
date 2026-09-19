@@ -7,7 +7,7 @@ Snappify/Carbon/Ray.so, positioned on being scriptable and offline-capable.
 ## Stack
 
 Go 1.25. Cobra for the CLI, chroma for syntax highlighting (250+ languages, 50+ themes),
-fogleman/gg + golang/freetype for rendering, golang.org/x/image for image encoding.
+fogleman/gg + golang/freetype for rendering, golang.org/x/image for the embedded monospace font.
 
 ## Commands
 
