@@ -9,6 +9,10 @@ Snappify/Carbon/Ray.so, positioned on being scriptable and offline-capable.
 Go 1.25. Cobra for the CLI, chroma for syntax highlighting (250+ languages, 50+ themes),
 fogleman/gg + golang/freetype for rendering, golang.org/x/image for the embedded monospace font.
 
+**Prerequisite:** `--format mp4` shells out to `ffmpeg` (`internal/encoder/mp4.go`) and fails
+with "ffmpeg not found in PATH" if it's missing. GIF output has no such dependency.
+`brew install ffmpeg`.
+
 ## Commands
 
 ```bash
