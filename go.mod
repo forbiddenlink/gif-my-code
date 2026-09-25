@@ -1,13 +1,13 @@
 module github.com/forbiddenlink/gif-my-code
 
-go 1.25.0
+go 1.26.0
 
 require (
 	github.com/alecthomas/chroma/v2 v2.27.0
 	github.com/fogleman/gg v1.3.0
 	github.com/golang/freetype v0.0.0-20170609003504-e2365dfdc4a0
 	github.com/spf13/cobra v1.10.2
-	golang.org/x/image v0.45.0
+	golang.org/x/image v0.46.0
 )
 
 require (
