@@ -100,6 +100,9 @@ gif-my-code example.js --theme monokai
 
 # Faster animation
 gif-my-code example.tsx --speed 2.0
+
+# Read code from stdin (use --lang to pick the highlighter)
+cat example.go | gif-my-code --lang go -o demo.gif
 ```
 
 ### Advanced Examples

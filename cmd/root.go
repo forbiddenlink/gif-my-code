@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 
@@ -62,31 +63,19 @@ func init() {
 }
 
 func run(cmd *cobra.Command, args []string) error {
-	var filePath string
-	var code string
-	var lang string
 	var err error
 
-	// Read input (file or stdin)
-	if len(args) == 0 {
-		// TODO: Read from stdin
-		return fmt.Errorf("stdin support coming soon - please provide a file path")
-	} else {
-		filePath = args[0]
-		code, err = parser.ReadFile(filePath)
-		if err != nil {
-			return fmt.Errorf("failed to read file: %w", err)
-		}
-
-		// Detect language from file extension if not provided
-		if language == "" {
-			lang = parser.DetectLanguage(filePath)
-		} else {
-			lang = language
-		}
+	// Read input (file or piped stdin)
+	stdinIsTerminal := true
+	if fi, statErr := os.Stdin.Stat(); statErr == nil {
+		stdinIsTerminal = fi.Mode()&os.ModeCharDevice != 0
+	}
+	code, lang, filePath, err := resolveInput(args, os.Stdin, stdinIsTerminal, language)
+	if err != nil {
+		return err
 	}
 
-	fmt.Printf("📖 Reading %s (%s)\n", filepath.Base(filePath), lang)
+	fmt.Printf("📖 Reading %s (%s)\n", filePath, lang)
 	fmt.Printf("🎨 Theme: %s\n", theme)
 	fmt.Printf("⚡ Speed: %.1fx\n", speed)
 
@@ -159,6 +148,38 @@ func run(cmd *cobra.Command, args []string) error {
 
 	fmt.Printf("\n✅ Done! Saved to: %s (%.2f MB)\n", output, sizeMB)
 	return nil
+}
+
+// resolveInput returns the code, language and display name for the run.
+// With a file argument it reads the file; otherwise it reads piped stdin.
+func resolveInput(args []string, stdin io.Reader, stdinIsTerminal bool, langFlag string) (code, lang, name string, err error) {
+	if len(args) > 0 {
+		code, err = parser.ReadFile(args[0])
+		if err != nil {
+			return "", "", "", fmt.Errorf("failed to read file: %w", err)
+		}
+		lang = langFlag
+		if lang == "" {
+			lang = parser.DetectLanguage(args[0])
+		}
+		return code, lang, filepath.Base(args[0]), nil
+	}
+
+	if stdinIsTerminal {
+		return "", "", "", fmt.Errorf("no input: provide a file path or pipe code on stdin (for example: cat main.go | gif-my-code --lang go)")
+	}
+	data, err := io.ReadAll(stdin)
+	if err != nil {
+		return "", "", "", fmt.Errorf("failed to read stdin: %w", err)
+	}
+	if len(data) == 0 {
+		return "", "", "", fmt.Errorf("no input: stdin was empty")
+	}
+	lang = langFlag
+	if lang == "" {
+		lang = "text"
+	}
+	return string(data), lang, "stdin", nil
 }
 
 func Execute() {
