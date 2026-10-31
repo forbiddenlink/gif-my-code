@@ -10,6 +10,7 @@ import (
 	"github.com/forbiddenlink/gif-my-code/internal/encoder"
 	"github.com/forbiddenlink/gif-my-code/internal/highlight"
 	"github.com/forbiddenlink/gif-my-code/internal/parser"
+	"github.com/forbiddenlink/gif-my-code/internal/render"
 	"github.com/spf13/cobra"
 )
 
@@ -28,6 +29,7 @@ var (
 	hiDPI        bool
 	lineNumbers  bool
 	laser        bool
+	padding      int
 )
 
 var rootCmd = &cobra.Command{
@@ -60,6 +62,7 @@ func init() {
 	rootCmd.Flags().BoolVar(&hiDPI, "hidpi", false, "Render at 2x resolution (Retina scale)")
 	rootCmd.Flags().BoolVar(&lineNumbers, "line-numbers", false, "Show line numbers")
 	rootCmd.Flags().BoolVar(&laser, "laser", true, "Use fluid laser reveal animation instead of typing")
+	rootCmd.Flags().IntVar(&padding, "padding", render.DefaultPadding, "Inner padding in pixels (at 1x scale)")
 }
 
 func run(cmd *cobra.Command, args []string) error {
@@ -114,6 +117,7 @@ func run(cmd *cobra.Command, args []string) error {
 		LineNumbers:    lineNumbers,
 		Language:       lang,
 		LaserReveal:    laser,
+		Padding:        padding,
 	}
 	frames, err := animator.GenerateFrames(highlighted, config)
 	if err != nil {

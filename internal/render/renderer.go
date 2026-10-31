@@ -41,8 +41,22 @@ type Renderer struct {
 	font   *truetype.Font
 }
 
-// NewRenderer creates a new renderer with enhanced visual config
-func NewRenderer(width int, fontSize float64, highlightLines []int, windowStyle string, theme string, hiDPI bool, lineNumbers bool, language string, laserReveal bool) (*Renderer, error) {
+// DefaultPadding is the inner padding in pixels at 1x scale.
+const DefaultPadding = 36
+
+// baseHeight is the canvas height in pixels at 1x scale.
+const baseHeight = 600
+
+// NewRenderer creates a new renderer with enhanced visual config.
+// padding is in pixels at 1x scale and must leave room for content inside the canvas.
+func NewRenderer(width int, fontSize float64, highlightLines []int, windowStyle string, theme string, hiDPI bool, lineNumbers bool, language string, laserReveal bool, padding int) (*Renderer, error) {
+	if padding < 0 {
+		return nil, fmt.Errorf("padding must not be negative, got %d", padding)
+	}
+	if limit := min(width, baseHeight); padding*2 >= limit {
+		return nil, fmt.Errorf("padding %d is too large: it must be less than %d for a %dx%d canvas", padding, limit/2, width, baseHeight)
+	}
+
 	// Parse the embedded font
 	font, err := truetype.Parse(gomonobold.TTF)
 	if err != nil {
@@ -63,13 +77,13 @@ func NewRenderer(width int, fontSize float64, highlightLines []int, windowStyle 
 	// Enhanced config with professional styling - Cinematic Deep Space theme
 	config := Config{
 		Width:          int(float64(width) * scaleFactor),
-		Height:         int(600 * scaleFactor), // Will be calculated based on content
+		Height:         int(baseHeight * scaleFactor), // Will be calculated based on content
 		FontSize:       fontSize * scaleFactor,
-		Padding:        int(36.0 * scaleFactor),        // Tighter, more professional padding
-		LineHeight:     1.5,                            // Better readability
-		BgColor:        color.RGBA{15, 17, 26, 255},    // Deep Space Window Base (#0F111A)
-		CursorColor:    color.RGBA{255, 255, 255, 220}, // Slightly more opaque
-		HighlightColor: color.RGBA{255, 255, 255, 15},  // Subtle white wash for highlight background
+		Padding:        int(float64(padding) * scaleFactor), // Default 36: tighter, more professional
+		LineHeight:     1.5,                                 // Better readability
+		BgColor:        color.RGBA{15, 17, 26, 255},         // Deep Space Window Base (#0F111A)
+		CursorColor:    color.RGBA{255, 255, 255, 220},      // Slightly more opaque
+		HighlightColor: color.RGBA{255, 255, 255, 15},       // Subtle white wash for highlight background
 		HighlightLines: highlightMap,
 		WindowStyle:    windowStyle,
 		Theme:          theme,
