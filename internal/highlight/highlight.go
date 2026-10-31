@@ -3,11 +3,16 @@ package highlight
 import (
 	"bytes"
 	"fmt"
+	"strings"
 
 	"github.com/alecthomas/chroma/v2"
 	"github.com/alecthomas/chroma/v2/lexers"
 	"github.com/alecthomas/chroma/v2/styles"
 )
+
+// TabWidth is the tab stop width in columns. The embedded font has no tab glyph,
+// so tabs are expanded to spaces before rendering.
+const TabWidth = 4
 
 // Token represents a syntax-highlighted token
 type Token struct {
@@ -53,7 +58,7 @@ func Highlight(code, language, themeName string) (*HighlightedCode, error) {
 	}
 
 	return &HighlightedCode{
-		Tokens: tokens,
+		Tokens: expandTabs(tokens),
 		Theme:  themeName,
 	}, nil
 }
@@ -76,4 +81,31 @@ func ListThemes() []string {
 // ValidateTheme checks if a theme exists
 func ValidateTheme(name string) bool {
 	return styles.Get(name) != nil
+}
+
+// expandTabs replaces each tab with spaces up to the next tab stop, tracking the
+// column across tokens. Doing it here keeps the renderer's character counts,
+// cursor position and line highlights in step with what is drawn.
+func expandTabs(tokens []Token) []Token {
+	col := 0
+	out := make([]Token, len(tokens))
+	for i, tok := range tokens {
+		var b strings.Builder
+		for _, ch := range tok.Text {
+			switch ch {
+			case '\t':
+				n := TabWidth - col%TabWidth
+				b.WriteString(strings.Repeat(" ", n))
+				col += n
+			case '\n':
+				b.WriteRune(ch)
+				col = 0
+			default:
+				b.WriteRune(ch)
+				col++
+			}
+		}
+		out[i] = Token{Text: b.String(), Style: tok.Style}
+	}
+	return out
 }
