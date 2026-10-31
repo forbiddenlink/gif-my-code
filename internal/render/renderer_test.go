@@ -25,8 +25,8 @@ func frameHash(t *testing.T, r *Renderer) string {
 	return hex.EncodeToString(sum[:])
 }
 
-// Hash captured from origin/main (8144944) before --padding existed.
-const defaultFrameHash = "ede8347dbeb587e954c0596afb1e35ed18c99052e8c0751c43df1a4edd176e61"
+// Hash of the default frame after tab expansion landed on main; --padding must not change it.
+const defaultFrameHash = "51233ad63127818db8e8f7659b75a6f0eb4c193f92e2602da94a5b0eedd1d189"
 
 func TestDefaultPaddingMatchesPreviousOutput(t *testing.T) {
 	r, err := NewRenderer(800, 16, nil, "macos", "dracula", false, true, "go", true, DefaultPadding)
