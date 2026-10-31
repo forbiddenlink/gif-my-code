@@ -23,12 +23,13 @@ type Config struct {
 	LineNumbers    bool
 	Language       string
 	LaserReveal    bool
+	Padding        int
 }
 
 // GenerateFrames creates all animation frames
 func GenerateFrames(code *highlight.HighlightedCode, config Config) ([]*image.RGBA, error) {
 	// Create renderer with highlight config and visual enhancements
-	renderer, err := render.NewRenderer(config.Width, config.FontSize, config.HighlightLines, config.WindowStyle, config.Theme, config.HiDPI, config.LineNumbers, config.Language, config.LaserReveal)
+	renderer, err := render.NewRenderer(config.Width, config.FontSize, config.HighlightLines, config.WindowStyle, config.Theme, config.HiDPI, config.LineNumbers, config.Language, config.LaserReveal, config.Padding)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create renderer: %w", err)
 	}

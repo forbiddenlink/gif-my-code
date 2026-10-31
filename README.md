@@ -193,6 +193,7 @@ Flags:
       --laser              Use fluid laser reveal animation (default true)
       --no-cursor          Disable cursor animation
       --hidpi              Render at 2x resolution (Retina)
+      --padding int        Inner padding in pixels at 1x scale (default 36)
       --fps int            Frames per second (default 30)
   -h, --help               help for gif-my-code
 ```

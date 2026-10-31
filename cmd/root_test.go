@@ -62,3 +62,15 @@ func TestResolveInputFileUnchanged(t *testing.T) {
 		t.Errorf("got %q %q %q", code, lang, name)
 	}
 }
+
+func TestOverflowWarning(t *testing.T) {
+	if got := overflowWarning(0, 36); got != "" {
+		t.Errorf("no overflow should not warn, got %q", got)
+	}
+	got := overflowWarning(7, 200)
+	for _, want := range []string{"7 line", "--padding 200", "cut off"} {
+		if !strings.Contains(got, want) {
+			t.Errorf("warning %q missing %q", got, want)
+		}
+	}
+}

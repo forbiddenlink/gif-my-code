@@ -17,7 +17,7 @@ func tabFrame(t *testing.T, src string) []byte {
 	for _, tok := range code.Tokens {
 		n += len([]rune(tok.Text))
 	}
-	r, err := NewRenderer(800, 16, []int{2}, "macos", "dracula", false, true, "go", true)
+	r, err := NewRenderer(800, 16, []int{2}, "macos", "dracula", false, true, "go", true, DefaultPadding)
 	if err != nil {
 		t.Fatal(err)
 	}
