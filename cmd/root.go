@@ -99,6 +99,10 @@ func run(cmd *cobra.Command, args []string) error {
 		fmt.Printf("📍 Highlighting lines: %v\n", highlightLines)
 	}
 
+	if msg := overflowWarning(render.OverflowLines(highlighted.Tokens, fontSize, windowStyle, padding), padding); msg != "" {
+		fmt.Fprintln(os.Stderr, msg)
+	}
+
 	// Generate frames
 	fmt.Println("🎬 Generating animation frames...")
 	if windowStyle != "none" && windowStyle != "" {
@@ -191,4 +195,12 @@ func Execute() {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}
+}
+
+// overflowWarning explains lines that fall outside the fixed-height canvas, or returns "" when none do.
+func overflowWarning(lines, padding int) string {
+	if lines == 0 {
+		return ""
+	}
+	return fmt.Sprintf("warning: %d line(s) at the bottom do not fit the canvas at --padding %d and may be cut off. Lower --padding or shorten the input.", lines, padding)
 }

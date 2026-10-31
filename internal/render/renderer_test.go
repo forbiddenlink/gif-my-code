@@ -3,6 +3,7 @@ package render
 import (
 	"crypto/sha256"
 	"encoding/hex"
+	"strings"
 	"testing"
 
 	"github.com/forbiddenlink/gif-my-code/internal/highlight"
@@ -73,5 +74,37 @@ func TestPaddingRejectsTooLarge(t *testing.T) {
 	}
 	if _, err := NewRenderer(800, 16, nil, "none", "dracula", false, false, "go", true, 299); err != nil {
 		t.Errorf("padding 299 should be accepted: %v", err)
+	}
+}
+
+func tokensOf(t *testing.T, src string) []highlight.Token {
+	t.Helper()
+	code, err := highlight.Highlight(src, "go", "dracula")
+	if err != nil {
+		t.Fatal(err)
+	}
+	return code.Tokens
+}
+
+func TestOverflowLines(t *testing.T) {
+	long := strings.Repeat("x := 1\n", 40)
+	cases := []struct {
+		name    string
+		src     string
+		window  string
+		padding int
+		want    int
+	}{
+		{"short file at default fits", sample, "macos", DefaultPadding, 0},
+		{"long file at default overflows", long, "macos", DefaultPadding, 20},
+		{"short file at large padding overflows", strings.Repeat("x := 1\n", 14), "macos", 200, 7},
+		{"no window chrome leaves more room", strings.Repeat("x := 1\n", 14), "none", 200, 6},
+		{"padding 0 fits the same file", strings.Repeat("x := 1\n", 14), "macos", 0, 0},
+	}
+	for _, c := range cases {
+		got := OverflowLines(tokensOf(t, c.src), 16, c.window, c.padding)
+		if got != c.want {
+			t.Errorf("%s: OverflowLines = %d, want %d", c.name, got, c.want)
+		}
 	}
 }

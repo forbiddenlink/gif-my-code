@@ -47,6 +47,9 @@ const DefaultPadding = 36
 // baseHeight is the canvas height in pixels at 1x scale.
 const baseHeight = 600
 
+// lineHeightFactor is the line height as a multiple of the font size.
+const lineHeightFactor = 1.5
+
 // NewRenderer creates a new renderer with enhanced visual config.
 // padding is in pixels at 1x scale and must leave room for content inside the canvas.
 func NewRenderer(width int, fontSize float64, highlightLines []int, windowStyle string, theme string, hiDPI bool, lineNumbers bool, language string, laserReveal bool, padding int) (*Renderer, error) {
@@ -80,7 +83,7 @@ func NewRenderer(width int, fontSize float64, highlightLines []int, windowStyle 
 		Height:         int(baseHeight * scaleFactor), // Will be calculated based on content
 		FontSize:       fontSize * scaleFactor,
 		Padding:        int(float64(padding) * scaleFactor), // Default 36: tighter, more professional
-		LineHeight:     1.5,                                 // Better readability
+		LineHeight:     lineHeightFactor,                    // Better readability
 		BgColor:        color.RGBA{15, 17, 26, 255},         // Deep Space Window Base (#0F111A)
 		CursorColor:    color.RGBA{255, 255, 255, 220},      // Slightly more opaque
 		HighlightColor: color.RGBA{255, 255, 255, 15},       // Subtle white wash for highlight background
@@ -549,4 +552,41 @@ func (r *Renderer) CalculateHeight(tokens []highlight.Token) int {
 
 	height := int(float64(r.config.Padding)*2 + float64(lines)*r.config.FontSize*r.config.LineHeight + chromeHeight)
 	return height
+}
+
+// OverflowLines returns how many lines of code fall outside the canvas at the
+// given padding, so callers can warn instead of silently cutting output. The
+// canvas height is fixed, and a line fits when its baseline leaves room for the
+// bottom padding. A trailing newline does not count as a line. Layout scales
+// linearly with hiDPI, so the 1x numbers are enough.
+func OverflowLines(tokens []highlight.Token, fontSize float64, windowStyle string, padding int) int {
+	lines := 1
+	endsWithNewline := false
+	for _, token := range tokens {
+		for _, ch := range token.Text {
+			if ch == '\n' {
+				lines++
+			}
+			endsWithNewline = ch == '\n'
+		}
+	}
+	if endsWithNewline {
+		lines--
+	}
+
+	chromeHeight := 0.0
+	if windowStyle == "macos" || windowStyle == "windows" {
+		chromeHeight = 40.0
+	}
+	lineHeight := fontSize * lineHeightFactor
+	firstBaseline := float64(padding) + fontSize + chromeHeight
+	room := baseHeight - float64(padding) - firstBaseline
+	fit := 0
+	if room >= 0 {
+		fit = int(room/lineHeight) + 1
+	}
+	if lines > fit {
+		return lines - fit
+	}
+	return 0
 }
