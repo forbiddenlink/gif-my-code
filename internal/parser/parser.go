@@ -20,7 +20,7 @@ func ReadFile(path string) (string, error) {
 // DetectLanguage detects the programming language from file extension
 func DetectLanguage(path string) string {
 	ext := strings.ToLower(filepath.Ext(path))
-	
+
 	// Map common extensions to chroma language names
 	langMap := map[string]string{
 		".go":     "go",
@@ -81,6 +81,9 @@ func DetectLanguage(path string) string {
 	return "text"
 }
 
+// MaxHighlightEntries bounds the expanded list, including duplicate selections.
+const MaxHighlightEntries = 100_000
+
 // ParseHighlightLines parses highlight line specification (e.g., "5,7-9" -> [5,7,8,9])
 func ParseHighlightLines(spec string) ([]int, error) {
 	if spec == "" {
@@ -92,7 +95,7 @@ func ParseHighlightLines(spec string) ([]int, error) {
 
 	for _, part := range parts {
 		part = strings.TrimSpace(part)
-		
+
 		// Check for range (e.g., "7-9")
 		if strings.Contains(part, "-") {
 			rangeParts := strings.Split(part, "-")
@@ -110,19 +113,35 @@ func ParseHighlightLines(spec string) ([]int, error) {
 				return nil, fmt.Errorf("invalid end line: %s", rangeParts[1])
 			}
 
+			if start < 1 || end < 1 {
+				return nil, fmt.Errorf("line numbers must be positive")
+			}
+
 			if start > end {
 				return nil, fmt.Errorf("start line (%d) must be <= end line (%d)", start, end)
 			}
 
-			// Add all lines in range
-			for i := start; i <= end; i++ {
+			// Positive ordered endpoints make subtraction safe, including MaxInt.
+			if end-start >= MaxHighlightEntries-len(lines) {
+				return nil, fmt.Errorf("highlight selection exceeds %d entries", MaxHighlightEntries)
+			}
+			for i := start; ; i++ {
 				lines = append(lines, i)
+				if i == end {
+					break // Do not increment past MaxInt.
+				}
 			}
 		} else {
 			// Single line number
 			line, err := strconv.Atoi(part)
 			if err != nil {
 				return nil, fmt.Errorf("invalid line number: %s", part)
+			}
+			if line < 1 {
+				return nil, fmt.Errorf("line numbers must be positive")
+			}
+			if len(lines) >= MaxHighlightEntries {
+				return nil, fmt.Errorf("highlight selection exceeds %d entries", MaxHighlightEntries)
 			}
 			lines = append(lines, line)
 		}

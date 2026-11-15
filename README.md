@@ -187,7 +187,7 @@ Flags:
   -w, --width int          Image width in pixels (default 800)
   -f, --font-size float    Font size (default 16)
   -l, --lang string        Force language (auto-detect if not provided)
-      --highlight string   Lines to highlight (e.g., '5,7-9')
+      --highlight string   Lines to highlight (e.g., '5,7-9'); maximum 100,000 expanded entries
       --line-numbers       Show line numbers
       --window string      Window style: macos, windows, or none (default "none")
       --laser              Use fluid laser reveal animation (default true)
