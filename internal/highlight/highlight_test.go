@@ -46,3 +46,12 @@ func TestTabsExpandedAcrossTokens(t *testing.T) {
 		t.Errorf("wrong alignment: %q", joined(h))
 	}
 }
+
+func TestValidateThemeRejectsUnknown(t *testing.T) {
+	if !ValidateTheme("dracula") {
+		t.Error("dracula should be valid")
+	}
+	if ValidateTheme("not-a-real-theme") {
+		t.Error("unknown theme must not validate (chroma falls back silently)")
+	}
+}

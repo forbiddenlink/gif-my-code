@@ -5,6 +5,8 @@ import (
 	"io"
 	"os"
 	"path/filepath"
+	"sort"
+	"strings"
 
 	"github.com/forbiddenlink/gif-my-code/internal/animator"
 	"github.com/forbiddenlink/gif-my-code/internal/encoder"
@@ -30,6 +32,7 @@ var (
 	lineNumbers  bool
 	laser        bool
 	padding      int
+	listThemes   bool
 )
 
 var rootCmd = &cobra.Command{
@@ -62,10 +65,18 @@ func init() {
 	rootCmd.Flags().BoolVar(&hiDPI, "hidpi", false, "Render at 2x resolution (Retina scale)")
 	rootCmd.Flags().BoolVar(&lineNumbers, "line-numbers", false, "Show line numbers")
 	rootCmd.Flags().BoolVar(&laser, "laser", true, "Use fluid laser reveal animation instead of typing")
+	rootCmd.Flags().BoolVar(&listThemes, "list-themes", false, "Print the available color themes and exit")
 	rootCmd.Flags().IntVar(&padding, "padding", render.DefaultPadding, "Inner padding in pixels (at 1x scale)")
 }
 
 func run(cmd *cobra.Command, args []string) error {
+	if listThemes {
+		printThemes(cmd.OutOrStdout())
+		return nil
+	}
+	if err := checkTheme(theme); err != nil {
+		return err
+	}
 	if fps <= 0 {
 		return fmt.Errorf("fps must be positive")
 	}
@@ -206,4 +217,66 @@ func overflowWarning(lines, padding int) string {
 		return ""
 	}
 	return fmt.Sprintf("warning: %d line(s) at the bottom do not fit the canvas at --padding %d and may be cut off. Lower --padding or shorten the input.", lines, padding)
+}
+
+// printThemes writes the available theme names, one per line.
+func printThemes(w io.Writer) {
+	for _, name := range highlight.ListThemes() {
+		fmt.Fprintln(w, name)
+	}
+}
+
+// checkTheme rejects unknown themes instead of letting chroma silently fall back.
+func checkTheme(name string) error {
+	if highlight.ValidateTheme(name) {
+		return nil
+	}
+	msg := fmt.Sprintf("unknown theme %q", name)
+	if near := nearestThemes(name, 3); len(near) > 0 {
+		msg += fmt.Sprintf(" (did you mean: %s?)", strings.Join(near, ", "))
+	}
+	return fmt.Errorf("%s. Run with --list-themes to see all options", msg)
+}
+
+// nearestThemes returns up to n theme names closest to name by edit distance.
+func nearestThemes(name string, n int) []string {
+	name = strings.ToLower(name)
+	type scored struct {
+		name string
+		d    int
+	}
+	var all []scored
+	for _, t := range highlight.ListThemes() {
+		d := editDistance(name, t)
+		if d <= 3 || strings.Contains(t, name) {
+			all = append(all, scored{t, d})
+		}
+	}
+	sort.SliceStable(all, func(i, j int) bool { return all[i].d < all[j].d })
+	var out []string
+	for i := 0; i < len(all) && i < n; i++ {
+		out = append(out, all[i].name)
+	}
+	return out
+}
+
+func editDistance(a, b string) int {
+	ra, rb := []rune(a), []rune(b)
+	prev := make([]int, len(rb)+1)
+	for j := range prev {
+		prev[j] = j
+	}
+	for i := 1; i <= len(ra); i++ {
+		cur := make([]int, len(rb)+1)
+		cur[0] = i
+		for j := 1; j <= len(rb); j++ {
+			cost := 1
+			if ra[i-1] == rb[j-1] {
+				cost = 0
+			}
+			cur[j] = min(prev[j]+1, cur[j-1]+1, prev[j-1]+cost)
+		}
+		prev = cur
+	}
+	return prev[len(rb)]
 }

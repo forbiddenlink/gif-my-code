@@ -80,7 +80,9 @@ func ListThemes() []string {
 
 // ValidateTheme checks if a theme exists
 func ValidateTheme(name string) bool {
-	return styles.Get(name) != nil
+	// styles.Get never returns nil (it falls back to a default), so check the registry names.
+	_, ok := styles.Registry[strings.ToLower(name)]
+	return ok
 }
 
 // expandTabs replaces each tab with spaces up to the next tab stop, tracking the
