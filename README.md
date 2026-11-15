@@ -98,6 +98,12 @@ gif-my-code example.py -o demo.gif
 # Use a different theme
 gif-my-code example.js --theme monokai
 
+# See every available theme
+gif-my-code --list-themes
+
+# Typing animation instead of the default laser reveal
+gif-my-code example.js --laser=false
+
 # Faster animation
 gif-my-code example.tsx --speed 2.0
 

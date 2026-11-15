@@ -74,3 +74,35 @@ func TestOverflowWarning(t *testing.T) {
 		}
 	}
 }
+
+func TestCheckThemeKnown(t *testing.T) {
+	if err := checkTheme("dracula"); err != nil {
+		t.Fatalf("dracula should be valid: %v", err)
+	}
+}
+
+func TestCheckThemeUnknownSuggests(t *testing.T) {
+	err := checkTheme("drakula")
+	if err == nil {
+		t.Fatal("expected error for unknown theme")
+	}
+	msg := err.Error()
+	if !strings.Contains(msg, `unknown theme "drakula"`) {
+		t.Errorf("message missing theme name: %s", msg)
+	}
+	if !strings.Contains(msg, "dracula") {
+		t.Errorf("message should suggest dracula: %s", msg)
+	}
+	if !strings.Contains(msg, "--list-themes") {
+		t.Errorf("message should point at --list-themes: %s", msg)
+	}
+}
+
+func TestPrintThemesOnePerLine(t *testing.T) {
+	var b strings.Builder
+	printThemes(&b)
+	lines := strings.Split(strings.TrimSpace(b.String()), "\n")
+	if len(lines) < 50 {
+		t.Errorf("expected at least 50 themes, got %d", len(lines))
+	}
+}
