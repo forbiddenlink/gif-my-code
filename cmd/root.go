@@ -66,6 +66,9 @@ func init() {
 }
 
 func run(cmd *cobra.Command, args []string) error {
+	if fps <= 0 {
+		return fmt.Errorf("fps must be positive")
+	}
 	var err error
 
 	// Read input (file or piped stdin)

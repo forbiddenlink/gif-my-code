@@ -13,6 +13,9 @@ import (
 
 // EncodeMP4 encodes frames into an MP4 video using ffmpeg
 func EncodeMP4(frames []*image.RGBA, outputPath string, fps int) error {
+	if fps <= 0 {
+		return fmt.Errorf("fps must be positive")
+	}
 	if len(frames) == 0 {
 		return fmt.Errorf("no frames to encode")
 	}
@@ -70,6 +73,9 @@ func EncodeMP4(frames []*image.RGBA, outputPath string, fps int) error {
 // EncodeMP4Pipe encodes frames by piping raw video data to ffmpeg
 // This is more efficient for large videos as it avoids writing temp files
 func EncodeMP4Pipe(frames []*image.RGBA, outputPath string, fps int) error {
+	if fps <= 0 {
+		return fmt.Errorf("fps must be positive")
+	}
 	if len(frames) == 0 {
 		return fmt.Errorf("no frames to encode")
 	}

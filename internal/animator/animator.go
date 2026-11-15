@@ -28,6 +28,9 @@ type Config struct {
 
 // GenerateFrames creates all animation frames
 func GenerateFrames(code *highlight.HighlightedCode, config Config) ([]*image.RGBA, error) {
+	if config.FPS <= 0 {
+		return nil, fmt.Errorf("fps must be positive")
+	}
 	// Create renderer with highlight config and visual enhancements
 	renderer, err := render.NewRenderer(config.Width, config.FontSize, config.HighlightLines, config.WindowStyle, config.Theme, config.HiDPI, config.LineNumbers, config.Language, config.LaserReveal, config.Padding)
 	if err != nil {
@@ -44,7 +47,7 @@ func GenerateFrames(code *highlight.HighlightedCode, config Config) ([]*image.RG
 	charsPerFrame := int(math.Max(1, 2*config.Speed))
 
 	// Calculate cursor blink interval (blink every 15 frames = 0.5 seconds at 30fps)
-	cursorBlinkInterval := config.FPS / 2
+	cursorBlinkInterval := max(1, config.FPS/2)
 
 	// Calculate total frames to estimate animation progress
 	typingFrames := (totalChars / charsPerFrame) + 1
